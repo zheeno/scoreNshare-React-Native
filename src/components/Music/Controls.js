@@ -56,7 +56,7 @@ const Controls = ({
     <TouchableOpacity activeOpacity={0.0} onPress={onPressRepeat}>
       <Image
         style={[styles.secondaryControl, repeatOn ? [] : styles.off]}
-        source={require("../assets/img/musicControls/ic_repeat_white.png")}
+        source={require("../assets/img/musicControls/ic_more_horiz_white.png")}
       />
     </TouchableOpacity>
   </View>

@@ -25,6 +25,7 @@ import {
   View,
   Toast
 } from "native-base";
+import SearchBar from "../components/SearchBar";
 
 export default class HomeScreen extends Component {
   componentDidMount() {
@@ -120,7 +121,7 @@ export default class HomeScreen extends Component {
   };
 
   static navigationOptions = {
-    headerTitle: <AppHeader />
+    headerTitle: <AppHeader searchBar={true} rounded={false} />
   };
 
   closeDrawer = () => {
