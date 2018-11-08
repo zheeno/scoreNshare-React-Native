@@ -1,0 +1,32 @@
+import React, { Component } from "react";
+import { createStackNavigator } from "react-navigation";
+// import { fromLeft } from "react-navigation-transitions";
+import HomeScreen from "./src/screens/HomeScreen";
+import CatalogueScreen from "./src/screens/CatalogueScreen";
+import CatalogueContentScreen from "./src/screens/CatalogueContentScreen";
+import MusicContentScreen from "./src/screens/MusicContentScreen";
+
+const RootStack = createStackNavigator(
+  {
+    Home: HomeScreen,
+    Catalogue: CatalogueScreen,
+    CatalogueContent: CatalogueContentScreen,
+    MusicContent: MusicContentScreen
+  },
+  {
+    initialRouteName: "Home",
+    // transitionConfig: () => fromLeft(),
+    navigationOptions: {
+      headerStyle: {
+        backgroundColor: "#310a11"
+      },
+      headerTintColor: "#fff"
+    }
+  }
+);
+
+export default class App extends Component {
+  render() {
+    return <RootStack />;
+  }
+}
