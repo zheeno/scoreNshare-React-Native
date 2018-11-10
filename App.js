@@ -5,13 +5,15 @@ import HomeScreen from "./src/screens/HomeScreen";
 import CatalogueScreen from "./src/screens/CatalogueScreen";
 import CatalogueContentScreen from "./src/screens/CatalogueContentScreen";
 import MusicContentScreen from "./src/screens/MusicContentScreen";
+import SearchScreen from "./src/screens/SearchScreen";
 
 const RootStack = createStackNavigator(
   {
     Home: HomeScreen,
     Catalogue: CatalogueScreen,
     CatalogueContent: CatalogueContentScreen,
-    MusicContent: MusicContentScreen
+    MusicContent: MusicContentScreen,
+    SearchScreenContent: SearchScreen
   },
   {
     initialRouteName: "Home",

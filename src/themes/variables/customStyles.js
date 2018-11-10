@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 
 export const styles = StyleSheet.create({
   bgDark: {
@@ -103,9 +103,51 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  
+
   audioElement: {
     height: 0,
-    width: 0,
+    width: 0
+  },
+
+  positionCenter: {
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  absolute: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
+  },
+  noBorders: {
+    borderBottomWidth: 0,
+    borderTopWidth: 0
+  },
+  listInfoText: {
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 13,
+    marginLeft: 10
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginTop: 25,
+    backgroundColor: "red"
+},
+  pdf: {
+    flex:1,
+    width:Dimensions.get('window').width,
+},
+  // flex
+  flexColumn: {
+    flex: 1
+  },
+
+  flexRow_1: {
+    flex: 1,
+    flexDirection: "row"
   }
 });

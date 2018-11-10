@@ -12,7 +12,8 @@ const Controls = ({
   onForward,
   onPressShuffle,
   onPressRepeat,
-  forwardDisabled
+  forwardDisabled,
+  toggleModal
 }) => (
   <View style={styles.container}>
     <TouchableOpacity activeOpacity={0.0} onPress={onPressShuffle}>
@@ -53,9 +54,9 @@ const Controls = ({
       />
     </TouchableOpacity>
     <View style={{ width: 40 }} />
-    <TouchableOpacity activeOpacity={0.0} onPress={onPressRepeat}>
+    <TouchableOpacity onPress={toggleModal}>
       <Image
-        style={[styles.secondaryControl, repeatOn ? [] : styles.off]}
+        style={[styles.secondaryControl]}
         source={require("../assets/img/musicControls/ic_more_horiz_white.png")}
       />
     </TouchableOpacity>

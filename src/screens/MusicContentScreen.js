@@ -1,34 +1,36 @@
 import React, { Component } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, Modal, Alert, findNodeHandle, Image } from "react-native";
 import {
   Container,
   StyleProvider,
   Text,
-  Content,
   View,
-  Icon,
-  List,
-  ListItem,
-  Left,
-  Right,
-  Body,
-  Thumbnail,
-  Footer,
-  FooterTab,
-  Button
+  Button,
+  Item
 } from "native-base";
-import { Col, Row, Grid } from "react-native-easy-grid";
+import Pdf from 'react-native-pdf';
+import { Row, Grid } from "react-native-easy-grid";
 import getTheme from "../themes/components";
 import scorenshareTheme from "../themes/variables/scorenshareTheme";
 import { styles } from "../themes/variables/customStyles";
 import FooterPlayer from "../components/Music/FooterPlayer";
-// import { renderCatalogue } from "../services/CatalogueScreenMethods";
+import { LoaderOverlay, ErrorOverlay } from "../components/MiscComponents";
+import { GetData } from "../services/ApiCaller";
+import { BlurView } from "react-native-blur";
 
 class MusicContentScreen extends Component {
+  componentDidMount() {
+    this.initMusicContentPage();
+  }
+
   constructor(props) {
     super(props);
-
     this.state = {
+      viewRef: 0,
+      modalVisible: false,
+      isLoading: true,
+      ajaxCallState: "fetching",
+      ajaxCallError: null,
       paused: true,
       totalLength: 1,
       currentPosition: 0,
@@ -36,8 +38,43 @@ class MusicContentScreen extends Component {
       repeatOn: false,
       shuffleOn: false,
       isChanging: true,
-      music: {}
+      musicObj: []
     };
+  }
+
+  initMusicContentPage = () => {
+    const musId = this.props.navigation.getParam("id", "NULL");
+    this.setState({ isLoading: true });
+    GetData("music/collection/" + musId + "?resType=json")
+      .then(result => {
+        let response = result;
+        this.setState({
+          isLoading: false,
+          ajaxCallState: 200,
+          ajaxCallError: null,
+          catalogue: response.catalogue,
+          musicObj: response.musicObj
+        });
+      })
+      .catch(error => {
+        this.setState({
+          isLoading: false,
+          ajaxCallState: "NET_ERR",
+          ajaxCallError: error.message
+        });
+      });
+  };
+
+  setModalVisible(visible) {
+    if (visible == undefined) {
+      visible = !this.state.modalVisible;
+    }
+    this.setState({ modalVisible: visible });
+  }
+
+  imageLoaded() {
+    this.setState({ viewRef: findNodeHandle(this.backgroundImage) });
+    alert(findNodeHandle(this.backgroundImage));
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -45,13 +82,6 @@ class MusicContentScreen extends Component {
       title: navigation.getParam("title")
     };
   };
-
-  componentDidMount() {
-    // get music data from server
-    this.setState({
-      music: this.props.navigation.state.params.content
-    });
-  }
 
   render() {
     const { navigate } = this.props.navigation;
@@ -88,45 +118,102 @@ class MusicContentScreen extends Component {
         audioUrl:
           "https://naijaextra.com/wp-content/uploads/2018/07/Passenger-Heart-To-Love.mp3"
       }
-    ];  
+    ];
 
     return (
       <StyleProvider style={getTheme(scorenshareTheme)}>
-        <Container>
-          <Grid style={[{ flex: 1, flexDirection: "column" }]}>
-            <Row
-              style={[
-                styles.bgDark,
-                {
-                  flex: 3,
-                  flexDirection: "row"
+        {this.state.isLoading ? (
+          <LoaderOverlay text={"Fetching... Please wait"} />
+        ) : this.state.ajaxCallState == "NET_ERR" ? (
+          <ErrorOverlay
+            text={this.state.ajaxCallError}
+            reloadPage={this.initCatalogueContentPage}
+          />
+        ) : (
+          <Container>
+            <Grid style={[{ flex: 1, flexDirection: "column" }]}>
+              <Row
+                style={[
+                  styles.bgDark,
+                  {
+                    flex: 3,
+                    flexDirection: "row"
+                  }
+                ]}
+              >
+                <ScrollView>
+                <View style={styles.PdfContainer}>
+                <Pdf
+                    source={source}
+                    onLoadComplete={(numberOfPages,filePath)=>{
+                        console.log(`number of pages: ${numberOfPages}`);
+                    }}
+                    onPageChanged={(page,numberOfPages)=>{
+                        console.log(`current page: ${page}`);
+                    }}
+                    onError={(error)=>{
+                        console.log(error);
+                    }}
+                    style={styles.pdf}/>
+            </View>
+                </ScrollView>
+              </Row>
+              <FooterPlayer
+                content={this.state.music}
+                tracks={tracks}
+                selectedTrack={this.state.selectedTrack}
+                currentPosition={this.state.currentPosition}
+                totalLength={this.state.totalLength}
+                paused={this.state.paused}
+                trackPaused={() => this.setState({ paused: true })}
+                trackPlayed={() => this.setState({ paused: false })}
+                Shuffle={() =>
+                  this.setState({ shuffleOn: !this.state.shuffleOn })
                 }
-              ]}
-            >
-              <ScrollView>
-                <Text style={styles.greyText}>Hello world</Text>
-              </ScrollView>
-            </Row>
-            <FooterPlayer
-              content={this.state.music}
-              tracks={tracks}
-              selectedTrack={this.state.selectedTrack}
-              currentPosition={this.state.currentPosition}
-              totalLength={this.state.totalLength}
-              paused={this.state.paused}
-              trackPaused={() => this.setState({ paused: true })}
-              trackPlayed={() => this.setState({ paused: false })}
-              Shuffle={() =>
-                this.setState({ shuffleOn: !this.state.shuffleOn })
-              }
-              shuffleState={this.state.shuffleOn}
-              Repeat={() => this.setState({ repeatOn: !this.state.repeatOn })}
-              repeatState={this.state.repeatOn}
-              forwardDisabled={this.state.selectedTrack === tracks.length - 1}
-              isChanging={this.state.isChanging}
-            />
-          </Grid>
-        </Container>
+                shuffleState={this.state.shuffleOn}
+                Repeat={() => this.setState({ repeatOn: !this.state.repeatOn })}
+                repeatState={this.state.repeatOn}
+                forwardDisabled={this.state.selectedTrack === tracks.length - 1}
+                isChanging={this.state.isChanging}
+                toggleModal={() => {
+                  this.setModalVisible();
+                }}
+              />
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={this.state.modalVisible}
+                onRequestClose={() => {
+                  Alert.alert("This modal will be closed in a sec");
+                  this.setModalVisible(false);
+                }}
+              >
+                <View
+                  style={[
+                    styles.flexRow_1,
+                    {
+                      flexDirection: "column-reverse",
+                      backgroundColor: "rgba(0,0,0,.94)"
+                    }
+                  ]}
+                >
+                  <View style={{ backgroundColor: "red" }}>
+                    <Text>Hello World!</Text>
+                    <Text>Hi, I am a tiny menu item</Text>
+
+                    <Button
+                      onPress={() => {
+                        this.setModalVisible(!this.state.modalVisible);
+                      }}
+                    >
+                      <Text>Hide Modal</Text>
+                    </Button>
+                  </View>
+                </View>
+              </Modal>
+            </Grid>
+          </Container>
+        )}
       </StyleProvider>
     );
   }

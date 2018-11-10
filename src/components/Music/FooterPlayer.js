@@ -27,7 +27,8 @@ const FooterPlayer = ({
   paused,
   isChanging,
   tracks,
-  selectedTrack
+  selectedTrack,
+  toggleModal
 }) => {
   const track = tracks[selectedTrack];
   const video = isChanging ? null : (
@@ -75,6 +76,7 @@ const FooterPlayer = ({
         onBack={onBack.bind(this)}
         onForward={onForward.bind(this)}
         paused={paused}
+        toggleModal={toggleModal}
       />
       {video}
     </Row>

@@ -25,7 +25,7 @@ const MusicCard = props => {
             style={styles.thumbnail}
           />
           <Text
-            numberOfLines={2}
+            numberOfLines={1}
             style={[styles.greyText, styles.musicCardTitle]}
           >
             {props.content.title}

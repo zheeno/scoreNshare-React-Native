@@ -1,5 +1,5 @@
 export function GetData(hash) {
-  let BaseUrl = "http://sheethub.cluster/";
+  let BaseUrl = "http://192.168.43.183/api/";
 
   return new Promise((resolve, reject) => {
     fetch(BaseUrl + hash, {

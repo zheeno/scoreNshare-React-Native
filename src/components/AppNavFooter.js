@@ -8,7 +8,11 @@ const AppNavFooter = props => {
     <Footer>
       <FooterTab>
         <Button
-          onPress={() => navigate("Home")}
+          onPress={() => {
+            props.activeTab == "Home"
+              ? props.reloadLanding()
+              : navigate("Home");
+          }}
           active={props.activeTab == "Home" ? true : false}
         >
           <Icon
@@ -17,7 +21,11 @@ const AppNavFooter = props => {
           />
         </Button>
         <Button
-          onPress={() => navigate("Catalogue", { id: 2 })}
+          onPress={() => {
+            props.activeTab == "Catalogue"
+              ? props.reloadCatalogues()
+              : navigate("Catalogue");
+          }}
           active={props.activeTab == "Catalogue" ? true : false}
         >
           <Icon
@@ -31,7 +39,10 @@ const AppNavFooter = props => {
             name="ios-musical-notes"
           />
         </Button>
-        <Button active={props.activeTab == "Search" ? true : false}>
+        <Button
+          onPress={() => navigate("SearchScreenContent")}
+          active={props.activeTab == "Search" ? true : false}
+        >
           <Icon
             active={props.activeTab == "Search" ? true : false}
             name="ios-search"
